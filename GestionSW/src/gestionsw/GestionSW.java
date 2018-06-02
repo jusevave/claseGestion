@@ -1,19 +1,10 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package gestionsw;
-
 import java.util.Scanner;
-
 /**
  *
  * @author EST_1F_GC1_010
  */
 public class GestionSW {
-
-  
     public static void main(String[] args) {
         int numCaracteres = 0; 
         int numPalabras = 0; 
@@ -23,14 +14,13 @@ public class GestionSW {
         String cadena = teclado.nextLine(); 
         numPalabras = contarPalabras(cadena);
         numCaracteres = contarCaracteres(cadena); 
-        reporte(numCaracteres, numPalabras);
-        
+        numEspacios = contarEspacios(cadena); 
+        reporte(numCaracteres, numPalabras, numEspacios);    
     }
-    public static void reporte(int _numCaracteres, int _numPalabras){
-        
+    public static void reporte(int _numCaracteres, int _numPalabras, int _numEspacios){
         System.out.println("Numero de caracteres: "+ _numCaracteres);
         System.out.println("Numero de palabras: "+ _numPalabras);
-        System.out.println("Numero de espacios: "+ (_numPalabras - 1));
+        System.out.println("Numero de espacios: "+ _numEspacios );
     }
     
     public static int contarCaracteres(String _cadena){
@@ -39,7 +29,19 @@ public class GestionSW {
     }
     public static int contarPalabras(String _cadena){
        char[] arreglo = _cadena.toCharArray();
+       char caracterOld; 
         int contador = 1; 
+        for (int i = 1; i < arreglo.length; i++) {
+            caracterOld = arreglo[i-1]; 
+            if (arreglo[i]!= ' ' && caracterOld==' ') {
+               contador++;  
+            }
+        }
+        return (contador==1)?0:contador; 
+    }
+     public static int contarEspacios(String _cadena){
+       char[] arreglo = _cadena.toCharArray();
+        int contador = 0; 
         for (int i = 0; i < arreglo.length; i++) {
             if (arreglo[i]== ' ') {
                contador++;  
@@ -49,4 +51,3 @@ public class GestionSW {
     }
   }
     
-
