@@ -15,7 +15,7 @@ import opennlp.tools.tokenize.Tokenizer;
 import opennlp.tools.tokenize.TokenizerME;
 import opennlp.tools.tokenize.TokenizerModel;
 
-public class Nlp {
+public class Nlp  {
     
     public Nlp() {
     }
@@ -39,7 +39,7 @@ public class Nlp {
          * tokenizar la frase de entrada.
          * Tokenizar significa separar la frase por cada palabra para el pocesamiento de la misma.
          * */
-        tokenModelIn = new FileInputStream("C:\\Users\\Leonardo-PC\\Documents\\Repositorio\\EIS\\GwOpenNlp\\src\\en-token.bin");
+        tokenModelIn = new FileInputStream("C:\\Users\\Leonardo-PC\\Documents\\Repositorio\\RepositorioGestion\\claseGestion\\GwOpenNlp\\src\\en-token.bin");
         TokenizerModel tokenModel = new TokenizerModel(tokenModelIn);
         Tokenizer tokenizer = new TokenizerME(tokenModel);
         String tokens[] = tokenizer.tokenize(rx);
@@ -50,7 +50,7 @@ public class Nlp {
         
         // Parts-Of-Speech Tagging
         // Lee el modelo de las partes de la frase.
-        posModelIn = new FileInputStream("C:\\Users\\Leonardo-PC\\Documents\\Repositorio\\EIS\\GwOpenNlp\\src\\en-pos-maxent.bin");
+        posModelIn = new FileInputStream("C:\\Users\\Leonardo-PC\\Documents\\Repositorio\\RepositorioGestion\\claseGestion\\GwOpenNlp\\src\\en-pos-maxent.bin");
         // loading the parts-of-speech model from stream
         POSModel posModel = new POSModel(posModelIn);
         // initializing the parts-of-speech tagger with model
@@ -78,59 +78,59 @@ public class Nlp {
             if (bandera2 ) {
                 // System.out.println("Probablemente pasiva");
                 break;
-            }   
+            }
         }
-       // Si es un pronombre propio o singular y le sigue un verbo en 3ra persona. pasivo
+        // Si es un pronombre propio o singular y le sigue un verbo en 3ra persona. pasivo
         for (int i = 0; i < tags.length; i++) {
-            bandera3 =  (tags[i].equals("NNP") && tags[i+1].equals("VBZ") &&(probs[i]>=0.84)  && (probs[i+1]>=0.84) );   
+            bandera3 =  (tags[i].equals("NNP") && tags[i+1].equals("VBZ") &&(probs[i]>=0.84)  && (probs[i+1]>=0.84) );
             if(bandera3){
                 //System.out.println("Probablemente pasiva");
                 break;
             }
         }
         // Si empieza con un determinante y luego un sustantivo... Pasivo.
-         bandera4 = (tags[0].equals("DT") &&tags[1].equals("NN"));   
-         
+        bandera4 = (tags[0].equals("DT") &&tags[1].equals("NN"));
+        
         //Puede que sea voz activa...
-        boolean rAux1 = bandera1 && !bandera4 && !bandera3; 
+        boolean rAux1 = bandera1 && !bandera4 && !bandera3;
         // Puede que sea pasiva...
-        boolean rAux2 = bandera4|| bandera3 || bandera2; 
+        boolean rAux2 = bandera4|| bandera3 || bandera2;
         
         if(rAux1 && !rAux2){
             return "Voz activa";
         }
         else if( !rAux1 && rAux2){
-             return "Voz pasiva";
+            return "Voz pasiva";
         }
         else{
-            return "No es posible determinar el tipo de voz "; 
+            return "No es posible determinar el tipo de voz ";
         }
         
     }
     /**
-     * @return Retorna lista de String con frases tanto de voz activa como de voz pasiva. 
+     * @return Retorna lista de String con frases tanto de voz activa como de voz pasiva.
      * @throws FileNotFoundException
      * @throws IOException
      */
     public List<String> leerCsv(){
-        String rutaCsv = "C:\\Users\\Leonardo-PC\\Documents\\Repositorio\\EIS\\GwOpenNlp\\src\\Libro1.csv"; 
+        String rutaCsv = "C:\\Users\\Leonardo-PC\\Documents\\Repositorio\\RepositorioGestion\\claseGestion\\GwOpenNlp\\src\\Libro1.csv";
         BufferedReader br = null;
         String line = "";
-        String cvsSplitBy = ",";
+        //String cvsSplitBy = ",";
         //String[] prueba = {"","",""};
-        List<String> sentenceList = new ArrayList<>(); 
-         try {
-             
+        // use comma as separator
+        //String[] country = line.split(cvsSplitBy);
+        List<String> sentenceList = new ArrayList<>();
+        try {
+            
             br = new BufferedReader(new FileReader(rutaCsv));
             while ((line = br.readLine()) != null) {
-                // use comma as separator
-                //String[] country = line.split(cvsSplitBy);
-                sentenceList.add(line); 
+                sentenceList.add(line);
                 System.out.println(line);
-
+                
             }
         } catch (FileNotFoundException e) {
-             System.out.println("No se  encontro el archivo "+ e.toString());
+            System.out.println("No se  encontro el archivo "+ e.toString());
         } catch (IOException e) {
             System.out.println("Error tipo IO "+ e.toString());
         } finally {
@@ -142,7 +142,29 @@ public class Nlp {
                 }
             }
         }
-        return sentenceList; 
+        return sentenceList;
     }
     
+    /**
+     *
+     */
+    public String contarTiposVoz(List<String> listaSentence) throws IOException{
+        int contPasive = 0;
+        int contActivo = 0;
+        int conX = 0;
+        for (String string : listaSentence) {
+            String resultadoValidacion = validar(string);
+            
+            if (resultadoValidacion.equals("Voz activa"))
+                contActivo++;
+            else if(resultadoValidacion.equals("Voz pasiva"))
+                contPasive++;
+            else{
+                conX++;
+            }
+        }
+           System.out.println("Activos "+contActivo+" Pasivos "+contPasive+ " otros "+conX);
+           return "Voice active"+","+contActivo+","+"Voice pasive"+","+contActivo+"," +"N.I"+","+conX; 
+    }
+   
 }
